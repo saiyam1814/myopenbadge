@@ -5,11 +5,6 @@ import BadgeView from './pages/BadgeView';
 import IssuerDashboard from './pages/IssuerDashboard';
 
 function App() {
-  // Determine base path for GitHub Pages
-  // If hosted at https://user.github.io/repo/, base should be '/repo/'
-  // This can be set via vite config base + import.meta.env.BASE_URL
-  const basename = import.meta.env.BASE_URL;
-
   return (
     <Router>
       <Layout>
