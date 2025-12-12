@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import BadgeView from './pages/BadgeView';
@@ -11,7 +11,7 @@ function App() {
   const basename = import.meta.env.BASE_URL;
 
   return (
-    <Router basename={basename}>
+    <Router>
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
