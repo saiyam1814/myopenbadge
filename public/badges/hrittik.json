@@ -1,6 +1,6 @@
 {
     "@context": "https://w3id.org/openbadges/v2",
-    "id": "http://localhost:5173/myopenbadge/badges/kubesimplify-hrittik.json",
+    "id": "https://saiyam1814.github.io/myopenbadge/badges/hrittik.json",
     "type": "Assertion",
     "recipient": {
         "type": "email",
@@ -9,7 +9,7 @@
     },
     "issuedOn": "2025-12-12T00:00:00.000Z",
     "badge": {
-        "id": "http://localhost:5173/myopenbadge/badges/class/kubesimplify.json",
+        "id": "https://saiyam1814.github.io/myopenbadge/badges/class/kubesimplify.json",
         "type": "BadgeClass",
         "name": "kubesimplify",
         "description": "awesomeness",
@@ -19,7 +19,7 @@
             "narrative": "awesomeness"
         },
         "issuer": {
-            "id": "http://localhost:5173/myopenbadge/issuer.json",
+            "id": "https://saiyam1814.github.io/myopenbadge/issuer.json",
             "type": "Profile",
             "name": "kubesimplify",
             "url": "https://kubesimplify.com",
