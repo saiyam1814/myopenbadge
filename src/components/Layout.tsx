@@ -23,7 +23,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                                 <span className="hidden sm:inline">Issue Badge</span>
                             </Link>
                             <a
-                                href="https://github.com/saiyampathak/myopenbadge"
+                                href="https://github.com/saiyam1814/myopenbadge"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-slate-600 hover:text-slate-900"

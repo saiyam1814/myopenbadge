@@ -1,6 +1,6 @@
 {
     "@context": "https://w3id.org/openbadges/v2",
-    "id": "https://saiyampathak.github.io/myopenbadge/badges/sample.json",
+    "id": "https://saiyam1814.github.io/myopenbadge/badges/sample.json",
     "type": "Assertion",
     "recipient": {
         "type": "email",
@@ -9,7 +9,7 @@
     },
     "issuedOn": "2023-12-12T12:00:00Z",
     "badge": {
-        "id": "https://saiyampathak.github.io/myopenbadge/badges/sample-badge-class.json",
+        "id": "https://saiyam1814.github.io/myopenbadge/badges/sample-badge-class.json",
         "type": "BadgeClass",
         "name": "Open Source Contributor",
         "description": "Awarded for significant contributions to the open source community.",
@@ -19,10 +19,10 @@
             "narrative": "The recipient has contributed at least 5 PRs to the repository."
         },
         "issuer": {
-            "id": "https://saiyampathak.github.io/myopenbadge/issuer.json",
+            "id": "https://saiyam1814.github.io/myopenbadge/issuer.json",
             "type": "Profile",
             "name": "Saiyam Pathak",
-            "url": "https://saiyampathak.github.io/myopenbadge",
+            "url": "https://saiyam1814.github.io/myopenbadge",
             "email": "saiyam@example.com"
         }
     },
