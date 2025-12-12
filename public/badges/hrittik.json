@@ -1,0 +1,32 @@
+{
+    "@context": "https://w3id.org/openbadges/v2",
+    "id": "http://localhost:5173/myopenbadge/badges/kubesimplify-hrittik.json",
+    "type": "Assertion",
+    "recipient": {
+        "type": "email",
+        "identity": "hrittik@vcluster.com",
+        "hashed": false
+    },
+    "issuedOn": "2025-12-12T00:00:00.000Z",
+    "badge": {
+        "id": "http://localhost:5173/myopenbadge/badges/class/kubesimplify.json",
+        "type": "BadgeClass",
+        "name": "kubesimplify",
+        "description": "awesomeness",
+        "image": "https://avatars.githubusercontent.com/u/67012359?v=4",
+        "criteria": {
+            "type": "Criteria",
+            "narrative": "awesomeness"
+        },
+        "issuer": {
+            "id": "http://localhost:5173/myopenbadge/issuer.json",
+            "type": "Profile",
+            "name": "kubesimplify",
+            "url": "https://kubesimplify.com",
+            "email": "saiyam911@gmail.com"
+        }
+    },
+    "verification": {
+        "type": "HostedBadge"
+    }
+}
