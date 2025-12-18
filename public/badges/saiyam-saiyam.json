@@ -1,0 +1,33 @@
+{
+  "@context": "https://w3id.org/openbadges/v2",
+  "id": "http://localhost:5173/badges/saiyam-saiyam.json",
+  "type": "Assertion",
+  "recipient": {
+    "type": "email",
+    "identity": "saiyam911@gmail.com",
+    "hashed": false
+  },
+  "recipientName": "saiyam pathak",
+  "issuedOn": "2025-12-18T00:00:00.000Z",
+  "badge": {
+    "id": "http://localhost:5173/badges/class/saiyam.json",
+    "type": "BadgeClass",
+    "name": "saiyam",
+    "description": "saiyam911@gmail.com",
+    "image": "https://placehold.co/400x400?text=Badge",
+    "criteria": {
+      "type": "Criteria",
+      "narrative": "saiyam911@gmail.com"
+    },
+    "issuer": {
+      "id": "http://localhost:5173/issuer.json",
+      "type": "Profile",
+      "name": "kubesimplify",
+      "url": "https://kubesimplify.com",
+      "email": "saiyam911@gmail.com"
+    }
+  },
+  "verification": {
+    "type": "HostedBadge"
+  }
+}
