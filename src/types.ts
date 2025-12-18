@@ -20,6 +20,11 @@ export interface BadgeCriteria {
     narrative: string;
 }
 
+export interface Skill {
+    name: string;
+    category?: string;
+}
+
 export interface BadgeClass {
     id: string;
     type: 'BadgeClass';
@@ -28,6 +33,7 @@ export interface BadgeClass {
     image: string | BadgeImage;
     criteria: BadgeCriteria;
     issuer: BadgeProfile;
+    tags?: string[];  // Skills/tags for the badge
 }
 
 export interface BadgeIdentityObject {
@@ -41,7 +47,9 @@ export interface BadgeAssertion {
     id: string;
     type: 'Assertion';
     recipient: BadgeIdentityObject;
+    recipientName?: string;  // Display name of recipient
     issuedOn: string;
+    expiresOn?: string;  // Optional expiration date
     badge: BadgeClass;
     verification: {
         type: 'HostedBadge';
@@ -52,4 +60,57 @@ export interface BadgeAssertion {
         id: string;
         narrative?: string;
     }[];
+    skills?: string[];  // Skills earned with this badge
+}
+
+// GitHub Integration Types
+export interface GitHubUser {
+    login: string;
+    id: number;
+    avatar_url: string;
+    name: string | null;
+    email: string | null;
+}
+
+export interface GitHubRepo {
+    owner: string;
+    name: string;
+    defaultBranch: string;
+    fullName: string;
+}
+
+export interface GitHubConfig {
+    clientId: string;
+    redirectUri: string;
+    scope: string;
+}
+
+export interface PRCreationResult {
+    success: boolean;
+    prUrl?: string;
+    error?: string;
+}
+
+// Badge Template (for reusable badge definitions)
+export interface BadgeTemplate {
+    id: string;
+    name: string;
+    description: string;
+    image: string;  // Logo/image URL
+    criteria: string;
+    skills: string[];
+    issuer: {
+        name: string;
+        url: string;
+        email: string;
+    };
+    createdAt: string;
+}
+
+// App Configuration
+export interface AppConfig {
+    baseUrl: string;
+    repoOwner: string;
+    repoName: string;
+    badgesPath: string;
 }

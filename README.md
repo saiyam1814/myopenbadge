@@ -1,76 +1,133 @@
-# Open Badge Issuer & Verifier
+# 🏅 OpenBadge
 
-An open-source, GitHub-hosted application for issuing and verifying Open Badges (v3.0).
+A fully open-source badge issuer and verifier. **GitHub is the single source of truth** - badges are stored as JSON files in your repository.
 
-## How it Works
+![OpenBadge](https://img.shields.io/badge/Open%20Badges-v2.0-blue) ![License](https://img.shields.io/badge/license-MIT-green)
 
-1.  **Hosted on GitHub**: The entire application lives on GitHub Pages.
-2.  **No Backend**: Badges are stored as JSON files in the `public/badges` directory.
-3.  **Verification**: The application verifies badges by fetching the JSON file from the repository headers and checking the integrity.
+## ✨ What It Does
 
-## Deployment
+- **Issue Badges** → Fill a form, add skills, custom logo
+- **Auto-Create PRs** → Badge JSON + PR to your repo automatically  
+- **Verify Badges** → Anyone can verify at `/verify/badge-name`
+- **Share on LinkedIn** → One-click add to profile
+- **Revoke Badges** → Delete creates a PR too
 
-To deploy this to your own GitHub repository:
+## 🚀 Quick Start (5 Minutes)
 
-1.  **Fork this repository**.
-2.  Enable **GitHub Pages**:
-    *   Go to **Settings** > **Pages**.
-    *   Select **Source**: `GitHub Actions` (recommended) or `Deploy from a branch`.
-    *   If deploying from a branch, push the `dist` folder to `gh-pages` branch.
-    *   **Recommended**: Use the included GitHub Actions workflow (create `.github/workflows/deploy.yml`).
-
-## Issuing a Badge
-
-1.  Go to your deployed site's **Issue Badge** page (`/create`).
-2.  Fill in the badge details.
-3.  Click **Generate JSON**.
-4.  Download the JSON file.
-5.  Upload the file to `public/badges/` in your repository.
-6.  Commit and push the changes.
-7.  The badge is now live and verifiable!
-
-## 🏢 Helper Guide for Companies / Organizations
-
-If you want to use this system to issue badges for your company (e.g., "Company X"):
-
-### 1. Setup
-1.  **Fork** this repository to your organization's GitHub account.
-2.  **Edit `vite.config.ts`**:
-    -   Change `base: '/myopenbadge/'` to `base: '/<your-repo-name>/'`.
-3.  **Edit `src/components/Layout.tsx`**:
-    -   Update the logo/brand name to your company's name.
-4.  **Push Changes**: Commit and push these changes.
-5.  **Enable GitHub Pages**:
-    -   Go to Repository Settings -> Pages.
-    -   Set Source to `GitHub Actions` (recommended) or deploy from `gh-pages` branch.
-
-### 2. Issuing Badges (The Admin Workflow)
-Since this is a static site without a database, "issuing" a badge means "committing a file".
-
-1.  **Generate**: Use the `/create` page on your deployed site (e.g., `https://company-x.github.io/badges/create`).
-    -   *Note: This page is just a helper tool; it doesn't save anything to a server.*
-    -   Fill in the Award Details, Recipient Email, etc.
-    -   Copy the generated JSON.
-2.  **Commit**:
-    -   Create a new file in `public/badges/<badge-name>.json` in your repo.
-    -   Paste the JSON content.
-    -   Commit the file to the `main` branch.
-3.  **Verify**:
-    -   Send the link `https://company-x.github.io/badges/verify/<badge-name>` to the recipient.
-
-### 3. LinkedIn Integration
-When a user clicks "Add to LinkedIn":
--   **What LinkedIn sees**: The Certification Name, Issuing Organization, Issue Date, and a Verification Link (URL).
--   **What User sees**: A standardized text entry on their LinkedIn profile under "Licenses & certifications".
--   **The Badge Image**: LinkedIn *does not* display the badge image directly on the profile. The image is seen when someone clicks "Show Credential" which links back to your verified page.
-
-## Development
+### 1. Fork & Clone
 
 ```bash
+git clone https://github.com/YOUR_USERNAME/myopenbadge.git
+cd myopenbadge
 npm install
 npm run dev
 ```
 
-## License
+### 2. Create GitHub Token
 
-MIT
+Go to **https://github.com/settings/tokens/new**
+- Name: `OpenBadge App`
+- Scope: ✅ `repo`
+- Click "Generate token" → Copy it
+
+### 3. Connect in App
+
+1. Open http://localhost:5173
+2. Go to **Settings**
+3. Paste your token → **Connect**
+4. Select your repository
+
+### 4. Issue Your First Badge!
+
+Go to **Issue** → Fill form → **Generate** → **Create PR** → Merge on GitHub → Done!
+
+---
+
+## 📖 Full Documentation
+
+See **[SETUP.md](./SETUP.md)** for:
+- Complete setup guide
+- Testing locally end-to-end
+- Deploying to GitHub Pages
+- Deploying to Vercel
+- Understanding authentication
+- FAQ & Troubleshooting
+
+---
+
+## 🔐 How Authentication Works
+
+**No complex OAuth needed!** Just:
+1. Create a Personal Access Token on GitHub
+2. Paste it in Settings
+3. Token is stored in YOUR browser only
+4. Sent directly to GitHub API (never to any other server)
+
+---
+
+## 🌐 Deployment Options
+
+| Platform | Difficulty | Notes |
+|----------|------------|-------|
+| **Vercel** | ⭐ Easy | One-click deploy, auto SSL |
+| **GitHub Pages** | ⭐⭐ Medium | Free, needs workflow setup |
+| **Any Static Host** | ⭐⭐ Medium | Netlify, Cloudflare, etc. |
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/saiyam1814/myopenbadge)
+
+---
+
+## 📁 Project Structure
+
+```
+myopenbadge/
+├── public/
+│   └── badges/          # Badge JSON files live here
+├── src/
+│   ├── pages/
+│   │   ├── Home.tsx           # Landing page
+│   │   ├── IssuerDashboard.tsx # Create badges
+│   │   ├── BadgeGallery.tsx   # View all badges
+│   │   ├── BadgeView.tsx      # Verify badge
+│   │   └── Settings.tsx       # GitHub connection
+│   └── lib/
+│       └── github.ts          # GitHub API integration
+└── SETUP.md                   # Full documentation
+```
+
+---
+
+## 🔄 Badge Workflow
+
+```
+Fill Form → Generate JSON → Create PR → Merge → Badge is Live!
+                                ↓
+                    Your GitHub Repo
+                    (Single Source of Truth)
+```
+
+---
+
+## 📋 Badge URL Format
+
+When you create a badge:
+- **Badge Name**: "Cloud Expert"
+- **Recipient**: "John Doe"
+- **Result**: `/verify/cloud-expert-john`
+
+Format: `badge-name-firstname` (lowercase, special chars removed)
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+MIT License - feel free to use this for your own badge issuance needs!
+
+## 🙏 Credits
+
+- [Open Badges Specification](https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html)
+- Built with [React](https://react.dev/), [Vite](https://vitejs.dev/), [Tailwind CSS](https://tailwindcss.com/)

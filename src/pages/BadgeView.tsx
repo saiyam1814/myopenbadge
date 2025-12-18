@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { BadgeAssertion } from '../types';
-import { CheckCircle, AlertCircle, Calendar, User, Share2, Linkedin } from 'lucide-react';
+import { CheckCircle, AlertCircle, Calendar, User, Share2, Linkedin, Tag, Clock, Building } from 'lucide-react';
 
 const BadgeView: React.FC = () => {
     const { badgeId } = useParams<{ badgeId: string }>();
@@ -16,16 +16,13 @@ const BadgeView: React.FC = () => {
             try {
                 setLoading(true);
                 // Construct URL: if it's a full URL, use it; otherwise assume local /badges/ path
-                // For Github Pages, we need to handle the base path correctly if using relative paths
-                // But for fetch, relative to root is usually safe if handled correctly.
                 const url = badgeId.startsWith('http')
                     ? badgeId
-                    : `${import.meta.env.BASE_URL}badges/${badgeId}.json`; // Use BASE_URL
+                    : `${import.meta.env.BASE_URL}badges/${badgeId}.json`;
 
                 const response = await fetch(url);
                 if (!response.ok) {
                     // Fallback for local development or different base path
-                    // Try without base url or relative
                     const localUrl = `badges/${badgeId}.json`;
                     const localResponse = await fetch(localUrl);
                     if (!localResponse.ok) throw new Error('Badge not found');
@@ -65,22 +62,37 @@ const BadgeView: React.FC = () => {
         );
     }
 
-    const { badge, recipient, issuedOn } = badgeData;
-    const imageUrl = typeof badge.image === 'string' ? badge.image : badge.image.id;
+    const { badge, recipient, issuedOn, recipientName, skills, expiresOn } = badgeData;
+    const imageUrl = typeof badge.image === 'string' ? badge.image : badge.image.id || '';
+    const displayName = recipientName || recipient.identity.split('@')[0];
+    const isExpired = expiresOn && new Date(expiresOn) < new Date();
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-12">
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
                 {/* Banner Status */}
-                <div className="bg-green-50 border-b border-green-100 px-8 py-4 flex items-center gap-3">
-                    <CheckCircle className="h-6 w-6 text-green-600" />
-                    <span className="font-semibold text-green-800">Verified & Valid Badge</span>
+                <div className={`px-8 py-4 flex items-center gap-3 ${
+                    isExpired 
+                        ? 'bg-amber-50 border-b border-amber-100' 
+                        : 'bg-green-50 border-b border-green-100'
+                }`}>
+                    {isExpired ? (
+                        <>
+                            <Clock className="h-6 w-6 text-amber-600" />
+                            <span className="font-semibold text-amber-800">Badge Expired</span>
+                        </>
+                    ) : (
+                        <>
+                            <CheckCircle className="h-6 w-6 text-green-600" />
+                            <span className="font-semibold text-green-800">Verified & Valid Badge</span>
+                        </>
+                    )}
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8 p-8 md:p-12">
                     {/* Left Column: Image */}
                     <div className="md:col-span-1 flex flex-col items-center">
-                        <div className="bg-slate-50 rounded-2xl p-4 w-full aspect-square flex items-center justify-center mb-6">
+                        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 w-full aspect-square flex items-center justify-center mb-6 shadow-inner">
                             <img
                                 src={imageUrl}
                                 alt={badge.name}
@@ -113,23 +125,52 @@ const BadgeView: React.FC = () => {
                     </div>
 
                     {/* Right Column: Details */}
-                    <div className="md:col-span-2 space-y-8">
+                    <div className="md:col-span-2 space-y-6">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">{badge.name}</h1>
                             <p className="text-lg text-slate-600 leading-relaxed">{badge.description}</p>
                         </div>
 
-                        <div className="flex flex-wrap gap-6 text-sm">
-                            <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full">
+                        {/* Skills Tags */}
+                        {(skills || badge.tags) && (skills?.length || badge.tags?.length) > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                                {(skills || badge.tags || []).map((skill, i) => (
+                                    <span
+                                        key={i}
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
+                                    >
+                                        <Tag className="h-3.5 w-3.5" />
+                                        {skill}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Meta Info */}
+                        <div className="flex flex-wrap gap-4 text-sm">
+                            <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full">
                                 <User className="h-4 w-4 text-slate-500" />
                                 <span className="text-slate-500">Issued to:</span>
-                                <span className="font-semibold text-slate-900">{recipient.identity.replace(/(?<=.{2}).(?=[^@]*?@)/g, '*')}</span>
+                                <span className="font-semibold text-slate-900">{displayName}</span>
                             </div>
-                            <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full">
+                            <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full">
                                 <Calendar className="h-4 w-4 text-slate-500" />
                                 <span className="text-slate-500">Date:</span>
                                 <span className="font-semibold text-slate-900">{new Date(issuedOn).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                             </div>
+                            {expiresOn && (
+                                <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+                                    isExpired ? 'bg-amber-50' : 'bg-slate-50'
+                                }`}>
+                                    <Clock className={`h-4 w-4 ${isExpired ? 'text-amber-500' : 'text-slate-500'}`} />
+                                    <span className={isExpired ? 'text-amber-600' : 'text-slate-500'}>
+                                        {isExpired ? 'Expired:' : 'Expires:'}
+                                    </span>
+                                    <span className={`font-semibold ${isExpired ? 'text-amber-800' : 'text-slate-900'}`}>
+                                        {new Date(expiresOn).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                                    </span>
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-4">
@@ -140,10 +181,22 @@ const BadgeView: React.FC = () => {
                         <div className="space-y-4">
                             <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Issuer</h3>
                             <div className="flex items-center gap-4">
-                                <div className="font-medium text-slate-900">{badge.issuer.name}</div>
+                                <div className="flex items-center gap-2">
+                                    <Building className="h-5 w-5 text-slate-400" />
+                                    <span className="font-medium text-slate-900">{badge.issuer.name}</span>
+                                </div>
                                 <a href={badge.issuer.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline text-sm">
                                     Visit Website
                                 </a>
+                            </div>
+                        </div>
+
+                        {/* Verification Details */}
+                        <div className="mt-6 p-4 bg-slate-50 rounded-xl">
+                            <h4 className="text-sm font-semibold text-slate-700 mb-2">Verification Details</h4>
+                            <div className="text-xs font-mono text-slate-500 break-all">
+                                <div><strong>Badge ID:</strong> {badgeData.id}</div>
+                                <div><strong>Verification Type:</strong> {badgeData.verification.type}</div>
                             </div>
                         </div>
                     </div>
