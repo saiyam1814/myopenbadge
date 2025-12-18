@@ -3,6 +3,13 @@ import { Link } from 'react-router-dom';
 import { ShieldCheck, PlusCircle, Github, Award, Settings } from 'lucide-react';
 import { isAuthenticated, getStoredUser } from '../lib/github';
 
+// X (Twitter) icon component
+const XIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+);
+
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const authenticated = isAuthenticated();
     const user = getStoredUser();
@@ -92,9 +99,39 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
             <footer className="bg-white border-t border-slate-200 mt-12">
                 <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                    <p className="text-center text-slate-500 text-sm">
-                        &copy; {new Date().getFullYear()} OpenBadge. Hosted on GitHub. Open Badges v2.0 Compliant.
-                    </p>
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        {/* Powered by Kubesimplify */}
+                        <a
+                            href="https://kubesimplify.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors group"
+                        >
+                            <span className="text-sm">Powered by</span>
+                            <img 
+                                src="https://raw.githubusercontent.com/kubesimplify/artwork/main/logos/logo-dark.svg"
+                                alt="Kubesimplify"
+                                className="h-6 group-hover:scale-105 transition-transform"
+                            />
+                        </a>
+
+                        {/* Center - Copyright */}
+                        <p className="text-slate-500 text-sm">
+                            &copy; {new Date().getFullYear()} OpenBadge • Open Badges v2.0 Compliant
+                        </p>
+
+                        {/* Created by Saiyam Pathak */}
+                        <a
+                            href="https://x.com/SaiyamPathak"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors group"
+                        >
+                            <span className="text-sm">Created by</span>
+                            <span className="font-semibold text-sm group-hover:text-blue-600 transition-colors">Saiyam Pathak</span>
+                            <XIcon className="h-4 w-4 group-hover:text-blue-600 transition-colors" />
+                        </a>
+                    </div>
                 </div>
             </footer>
         </div>
