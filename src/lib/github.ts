@@ -1,21 +1,13 @@
 import type { GitHubUser, PRCreationResult, AppConfig } from '../types';
 
-// GitHub OAuth Configuration
-const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || '';
-const GITHUB_REDIRECT_URI = import.meta.env.VITE_GITHUB_REDIRECT_URI || `${window.location.origin}/auth/callback`;
-
-// Check if OAuth is properly configured
-export function isOAuthConfigured(): boolean {
-    return !!GITHUB_CLIENT_ID && GITHUB_CLIENT_ID.length > 0;
-}
-
 // ============================================
-// ALTERNATIVE: Personal Access Token Method
+// Personal Access Token Method
 // ============================================
-// This is simpler and works without OAuth setup!
-// User provides their own GitHub PAT
+// User provides their own GitHub PAT for authentication
 
 const PAT_KEY = 'github_personal_access_token';
+const USER_KEY = 'github_user';
+const REPO_KEY = 'github_repo_config';
 
 export function setPersonalAccessToken(token: string): void {
     localStorage.setItem(PAT_KEY, token);
@@ -51,11 +43,6 @@ export async function validatePersonalAccessToken(token: string): Promise<GitHub
     }
 }
 
-// Storage keys
-const TOKEN_KEY = 'github_access_token';
-const USER_KEY = 'github_user';
-const REPO_KEY = 'github_repo_config';
-
 // Get app configuration from environment or detect from URL
 export function getAppConfig(): AppConfig {
     // Include the base path (e.g., /myopenbadge/) in the URL
@@ -72,61 +59,7 @@ export function getAppConfig(): AppConfig {
     };
 }
 
-// GitHub OAuth Functions
-export function initiateGitHubLogin(): void {
-    const state = crypto.randomUUID();
-    sessionStorage.setItem('github_oauth_state', state);
-    
-    const params = new URLSearchParams({
-        client_id: GITHUB_CLIENT_ID,
-        redirect_uri: GITHUB_REDIRECT_URI,
-        scope: 'repo user:email',
-        state
-    });
-    
-    window.location.href = `https://github.com/login/oauth/authorize?${params}`;
-}
-
-export async function handleOAuthCallback(code: string, state: string): Promise<boolean> {
-    const savedState = sessionStorage.getItem('github_oauth_state');
-    if (state !== savedState) {
-        console.error('OAuth state mismatch');
-        return false;
-    }
-    
-    try {
-        // Exchange code for token via our serverless function
-        const response = await fetch('/api/github/token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code })
-        });
-        
-        if (!response.ok) throw new Error('Token exchange failed');
-        
-        const { access_token } = await response.json();
-        localStorage.setItem(TOKEN_KEY, access_token);
-        
-        // Fetch user info
-        const user = await fetchGitHubUser(access_token);
-        if (user) {
-            localStorage.setItem(USER_KEY, JSON.stringify(user));
-        }
-        
-        sessionStorage.removeItem('github_oauth_state');
-        return true;
-    } catch (error) {
-        console.error('OAuth callback error:', error);
-        return false;
-    }
-}
-
 export function getAccessToken(): string | null {
-    // First check for OAuth token, then fall back to PAT
-    const oauthToken = localStorage.getItem(TOKEN_KEY);
-    if (oauthToken) return oauthToken;
-    
-    // Fall back to Personal Access Token
     return getPersonalAccessToken();
 }
 
@@ -145,30 +78,13 @@ export function setRepoConfig(owner: string, repo: string): void {
 }
 
 export function logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(REPO_KEY);
     localStorage.removeItem(PAT_KEY);
 }
 
 export function isAuthenticated(): boolean {
-    return !!localStorage.getItem(TOKEN_KEY) || hasPersonalAccessToken();
-}
-
-async function fetchGitHubUser(token: string): Promise<GitHubUser | null> {
-    try {
-        const response = await fetch('https://api.github.com/user', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: 'application/vnd.github.v3+json'
-            }
-        });
-        
-        if (!response.ok) return null;
-        return await response.json();
-    } catch {
-        return null;
-    }
+    return hasPersonalAccessToken();
 }
 
 // GitHub API Functions
@@ -492,4 +408,3 @@ export async function fetchUserRepos(): Promise<{ name: string; full_name: strin
         return [];
     }
 }
-

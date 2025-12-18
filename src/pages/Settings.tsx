@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Github, LogOut, CheckCircle, AlertCircle, Loader2, ExternalLink, FolderGit2, Key, Info, Copy, Eye, EyeOff } from 'lucide-react';
 import {
-    initiateGitHubLogin,
     logout,
     isAuthenticated,
     getStoredUser,
@@ -9,8 +8,6 @@ import {
     setRepoConfig,
     fetchUserRepos,
     getAppConfig,
-    isOAuthConfigured,
-    // PAT methods
     setPersonalAccessToken,
     getPersonalAccessToken,
     clearPersonalAccessToken,
@@ -24,7 +21,6 @@ const Settings: React.FC = () => {
     const [user, setUser] = useState<GitHubUser | null>(null);
     const [repos, setRepos] = useState<{ name: string; full_name: string; owner: { login: string } }[]>([]);
     const [selectedRepo, setSelectedRepo] = useState<string>('');
-    const [loading, setLoading] = useState(false);
     const [reposLoading, setReposLoading] = useState(false);
     const [initializing, setInitializing] = useState(true);
     
@@ -36,7 +32,6 @@ const Settings: React.FC = () => {
     
     const currentConfig = getStoredRepoConfig();
     const appConfig = getAppConfig();
-    const oauthConfigured = isOAuthConfigured();
 
     // Check for existing auth on mount
     useEffect(() => {
@@ -92,11 +87,6 @@ const Settings: React.FC = () => {
         const fetchedRepos = await fetchUserRepos();
         setRepos(fetchedRepos);
         setReposLoading(false);
-    };
-
-    const handleOAuthLogin = () => {
-        setLoading(true);
-        initiateGitHubLogin();
     };
 
     const handlePatSubmit = async () => {
@@ -191,14 +181,14 @@ const Settings: React.FC = () => {
                         </div>
                     ) : (
                         <div className="space-y-6">
-                            {/* Personal Access Token Method (Recommended) */}
+                            {/* Personal Access Token Method */}
                             <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
                                 <h3 className="font-semibold text-blue-900 flex items-center gap-2 mb-3">
                                     <Key className="h-5 w-5" />
-                                    Connect with Personal Access Token (Recommended)
+                                    Connect with Personal Access Token
                                 </h3>
                                 <p className="text-sm text-blue-800 mb-4">
-                                    This is the simplest method. Works on any hosting (GitHub Pages, Vercel, local).
+                                    Works on any hosting (GitHub Pages, Vercel, local). Your token is stored locally in your browser only.
                                 </p>
                                 
                                 <div className="space-y-3">
@@ -283,25 +273,6 @@ const Settings: React.FC = () => {
                                     <ExternalLink className="h-4 w-4" />
                                 </a>
                             </div>
-
-                            {/* OAuth Method (Alternative) */}
-                            {oauthConfigured && (
-                                <div className="border-t border-slate-200 pt-6">
-                                    <p className="text-sm text-slate-500 mb-3">Or connect with OAuth:</p>
-                                    <button
-                                        onClick={handleOAuthLogin}
-                                        disabled={loading}
-                                        className="inline-flex items-center gap-3 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-medium transition-colors disabled:opacity-50"
-                                    >
-                                        {loading ? (
-                                            <Loader2 className="h-5 w-5 animate-spin" />
-                                        ) : (
-                                            <Github className="h-5 w-5" />
-                                        )}
-                                        Connect with GitHub OAuth
-                                    </button>
-                                </div>
-                            )}
                         </div>
                     )}
                 </div>
