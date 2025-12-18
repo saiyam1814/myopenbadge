@@ -132,7 +132,7 @@ const BadgeView: React.FC = () => {
                         </div>
 
                         {/* Skills Tags */}
-                        {(skills || badge.tags) && (skills?.length || badge.tags?.length) > 0 && (
+                        {(skills || badge.tags) && ((skills?.length ?? 0) > 0 || (badge.tags?.length ?? 0) > 0) && (
                             <div className="flex flex-wrap gap-2">
                                 {(skills || badge.tags || []).map((skill, i) => (
                                     <span

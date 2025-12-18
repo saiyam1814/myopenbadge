@@ -37,7 +37,6 @@ const Settings: React.FC = () => {
     const currentConfig = getStoredRepoConfig();
     const appConfig = getAppConfig();
     const oauthConfigured = isOAuthConfigured();
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
     // Check for existing auth on mount
     useEffect(() => {
