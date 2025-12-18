@@ -151,7 +151,7 @@ export async function createBadgePR(
         
         if (!createBranchResponse.ok) throw new Error('Failed to create branch');
         
-        // 4. Create/update file in new branch
+        // 4. Create/update badge file in new branch
         const content = btoa(unescape(encodeURIComponent(badgeJson)));
         const filePath = `public/badges/${filename}`;
         
@@ -174,7 +174,64 @@ export async function createBadgePR(
         
         if (!createFileResponse.ok) throw new Error('Failed to create badge file');
         
-        // 5. Create Pull Request
+        // 5. Update badge-list.json to include the new badge
+        const badgeListPath = 'public/badges/badge-list.json';
+        let currentList: string[] = [];
+        let badgeListSha: string | undefined;
+        
+        try {
+            const listResponse = await fetch(
+                `https://api.github.com/repos/${owner}/${repo}/contents/${badgeListPath}?ref=${branchName}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/vnd.github.v3+json'
+                    }
+                }
+            );
+            
+            if (listResponse.ok) {
+                const listData = await listResponse.json();
+                badgeListSha = listData.sha;
+                const listContent = atob(listData.content.replace(/\n/g, ''));
+                currentList = JSON.parse(listContent);
+            }
+        } catch {
+            // badge-list.json doesn't exist yet, start with empty array
+        }
+        
+        // Add new filename if not already in list
+        if (!currentList.includes(filename)) {
+            currentList.push(filename);
+            currentList.sort();
+            
+            const updatedListContent = btoa(unescape(encodeURIComponent(JSON.stringify(currentList, null, 2))));
+            
+            const updateListBody: { message: string; content: string; branch: string; sha?: string } = {
+                message: `📝 Update badge list: add ${filename}`,
+                content: updatedListContent,
+                branch: branchName
+            };
+            
+            if (badgeListSha) {
+                updateListBody.sha = badgeListSha;
+            }
+            
+            await fetch(
+                `https://api.github.com/repos/${owner}/${repo}/contents/${badgeListPath}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateListBody)
+                }
+            );
+        }
+        
+        // 6. Create Pull Request
         const prResponse = await fetch(
             `https://api.github.com/repos/${owner}/${repo}/pulls`,
             {
@@ -281,7 +338,7 @@ export async function deleteBadgePR(
         
         if (!createBranchResponse.ok) throw new Error('Failed to create branch');
         
-        // 5. Delete file in new branch
+        // 5. Delete badge file in new branch
         const deleteFileResponse = await fetch(
             `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
             {
@@ -301,7 +358,53 @@ export async function deleteBadgePR(
         
         if (!deleteFileResponse.ok) throw new Error('Failed to delete badge file');
         
-        // 6. Create Pull Request
+        // 6. Update badge-list.json to remove the badge
+        const badgeListPath = 'public/badges/badge-list.json';
+        
+        try {
+            const listResponse = await fetch(
+                `https://api.github.com/repos/${owner}/${repo}/contents/${badgeListPath}?ref=${branchName}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/vnd.github.v3+json'
+                    }
+                }
+            );
+            
+            if (listResponse.ok) {
+                const listData = await listResponse.json();
+                const listContent = atob(listData.content.replace(/\n/g, ''));
+                let currentList: string[] = JSON.parse(listContent);
+                
+                // Remove the filename from the list
+                currentList = currentList.filter(f => f !== filename);
+                
+                const updatedListContent = btoa(unescape(encodeURIComponent(JSON.stringify(currentList, null, 2))));
+                
+                await fetch(
+                    `https://api.github.com/repos/${owner}/${repo}/contents/${badgeListPath}`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            Accept: 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: `📝 Update badge list: remove ${filename}`,
+                            content: updatedListContent,
+                            sha: listData.sha,
+                            branch: branchName
+                        })
+                    }
+                );
+            }
+        } catch {
+            // badge-list.json doesn't exist, nothing to update
+        }
+        
+        // 7. Create Pull Request
         const prResponse = await fetch(
             `https://api.github.com/repos/${owner}/${repo}/pulls`,
             {
@@ -363,7 +466,7 @@ export async function fetchBadgesFromRepo(): Promise<{ badges: any[]; error?: st
         }
         
         const files = await response.json();
-        const jsonFiles = files.filter((f: any) => f.name.endsWith('.json'));
+        const jsonFiles = files.filter((f: any) => f.name.endsWith('.json') && f.name !== 'badge-list.json');
         
         // Fetch each badge file content
         const badges = await Promise.all(

@@ -50,11 +50,11 @@ const BadgeGallery: React.FC = () => {
         try {
             const basePath = import.meta.env.BASE_URL || '/';
             
-            // First try to load from index.json (works on GitHub Pages)
+            // First try to load from badge-list.json (works on GitHub Pages)
             try {
-                const indexResponse = await fetch(`${basePath}badges/index.json`);
-                if (indexResponse.ok) {
-                    const badgeList = await indexResponse.json();
+                const listResponse = await fetch(`${basePath}badges/badge-list.json`);
+                if (listResponse.ok) {
+                    const badgeList = await listResponse.json();
                     const fetchedBadges = await Promise.all(
                         badgeList.map(async (filename: string) => {
                             try {
@@ -73,7 +73,7 @@ const BadgeGallery: React.FC = () => {
                     return;
                 }
             } catch {
-                // index.json doesn't exist, try directory listing
+                // badge-list.json doesn't exist, try directory listing
             }
 
             // Fallback: Try directory listing (works in local dev)
@@ -88,7 +88,7 @@ const BadgeGallery: React.FC = () => {
                     const links = Array.from(doc.querySelectorAll('a'));
                     const jsonFiles = links
                         .map(a => a.getAttribute('href'))
-                        .filter(href => href && href.endsWith('.json') && !href.includes('index.json')) as string[];
+                        .filter(href => href && href.endsWith('.json') && !href.includes('badge-list.json')) as string[];
 
                     if (jsonFiles.length > 0) {
                         const fetchedBadges = await Promise.all(
