@@ -1,0 +1,39 @@
+{
+  "@context": "https://w3id.org/openbadges/v2",
+  "id": "https://saiyam1814.github.io/myopenbadge/badges/kubesimplify-ambassador-saiyam.json",
+  "type": "Assertion",
+  "recipient": {
+    "type": "email",
+    "identity": "demo@demo.com",
+    "hashed": false
+  },
+  "recipientName": "saiyam pathak",
+  "issuedOn": "2025-12-18T00:00:00.000Z",
+  "badge": {
+    "id": "https://saiyam1814.github.io/myopenbadge/badges/class/kubesimplify-ambassador.json",
+    "type": "BadgeClass",
+    "name": "Kubesimplify Ambassador",
+    "description": "Awesome contributions to kubesimplify",
+    "image": "https://avatars.githubusercontent.com/u/8190114?v=4",
+    "criteria": {
+      "type": "Criteria",
+      "narrative": "contribute to kubesimplify"
+    },
+    "issuer": {
+      "id": "https://saiyam1814.github.io/myopenbadge/issuer.json",
+      "type": "Profile",
+      "name": "kubesimplify",
+      "url": "https://kubesimplify.com",
+      "email": "demo@demo.com"
+    },
+    "tags": [
+      "kubernetes,cncf"
+    ]
+  },
+  "verification": {
+    "type": "HostedBadge"
+  },
+  "skills": [
+    "kubernetes,cncf"
+  ]
+}
