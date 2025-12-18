@@ -1,1 +1,8 @@
-["demo.json", "dragon.json", "hrittik.json", "saiyam-saiyam.json", "sample.json"]
+[
+  "demo.json",
+  "dragon.json",
+  "hrittik.json",
+  "kubesimplify-ambassador-saiyam.json",
+  "saiyam-saiyam.json",
+  "sample.json"
+]
